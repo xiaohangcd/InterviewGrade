@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/style.css" />
+    <script type="text/javascript" src="../Js/jquery.js"></script>
+    <script type="text/javascript" src="../Js/jquery.sorted.js"></script>
+    <script type="text/javascript" src="../Js/bootstrap.js"></script>
+    <script type="text/javascript" src="../Js/ckform.js"></script>
+    <script type="text/javascript" src="../Js/common.js"></script>
+
+    <style type="text/css">
+        body {
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+
+        @media (max-width: 980px) {
+            /* Enable use of floated navbar text */
+            .navbar-text.pull-right {
+                float: none;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+<form class="form-inline definewidth m20" action="" method="get">
+    考试名称：<select id="issued_sub_key_c" name="issued_sub_key_c" onchange="getTime()"> 
+    <option>--请选择--</option>
+    </select>&nbsp;&nbsp;
+    考试时间：<select id="testtime_select" name="testtime_select" onchange="getClass()">
+    <option>--请选择--</option>    
+    </select>&nbsp;&nbsp;
+    考场名称：<select id="class_select" name="class_select">
+    <option>--请选择--</option>
+    </select>&nbsp;&nbsp;
+    <button type="button" class="btn btn-primary" id="submit">查询</button>&nbsp;&nbsp; <button type="button" class="btn btn-success" id="addnew">添加</button>
+</form>
+<table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+				<th>考官编号</th>
+				<th>考官姓名</th>
+				<th>考试名称</th>
+				<th>考试时间</th>
+				<th>考试地点</th>
+				<th>管理操作</th>
+    </tr>
+    </thead>
+		<tbody id="tbody1">
+		</tbody>
+        </table>
+
+</body>
+</html>
+<script>
+$(document).ready(
+		function() {
+			$.ajax({
+				url : "index2Select",
+				type : "get",
+				cache:false,
+				success : function(data) {
+					for (var i = 0; i < data.length; i++) {
+						$("#issued_sub_key_c").append(
+								"<option value=\""+data[i].t_name+"\">" + data[i].t_name + "</option>");
+					}
+				}
+			});
+		});
+function getTime() {
+	$("#testtime_select").empty();
+	$("#class_select").empty();
+	$("#testtime_select").append("<option value=1>--请选择--</option>");
+	var temp = $("#issued_sub_key_c").find("option:selected").val();
+	$.ajax({
+		url:"getTime",
+		type:"post",
+		cache:false,
+		data:{"test":temp},
+		success: function (data) {
+			for (var i = 0; i < data.length; i++) {
+				$("#testtime_select").append(
+						"<option value=\""+data[i].time+"\">" + data[i].time + "</option>");
+			}
+		}
+		
+	});
+}
+function getClass() {
+	$("#class_select").empty();
+	$("#class_select").append("<option value=1>--请选择--</option>");
+	var test = $("#issued_sub_key_c").find("option:selected").val();
+	var time = $("#testtime_select").find("option:selected").val();
+	$.ajax({
+		url:"getClass",
+		type:"post",
+		cache:false,
+		data:{"time":time,"test":test},
+		success: function (data) {
+			for (var i = 0; i < data.length; i++) {
+				$("#class_select").append(
+						"<option value=\""+data[i].r_name+"\">" + data[i].r_name + "</option>");
+			}
+		}
+		
+	});
+}
+$(function () {
+	$('#submit').click(function () {
+		var gettest=$("#issued_sub_key_c").find("option:selected").text();
+		var gettime=$("#testtime_select").find("option:selected").text();
+		var getclass=$("#class_select").find("option:selected").text();
+		$.ajax({
+			type:"post",
+			url:"selectTeacherInClass",
+			cache:false,
+			data:{"Test":gettest,"Time":gettime,"Class":getclass},
+			success:function(data){
+				 var div1=document.getElementById('tbody1');
+			        var code='';
+			        $.each(data,function(index,content){
+			            code+='<tr id="tab';
+			            code+=index;
+			            code+='"><td>';
+			            code+=content.e_number;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.e_name;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.t_name;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.time;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.r_name;
+			            code+='</td>';
+			            code+='<td>';
+			            code+='<a href="javascript:void(0)" onclick="del(this.parentNode.parentNode)">删除</a>';
+			            code+='</td>';
+			            code+='</tr>';
+			        });
+			        div1.innerHTML=code;
+			}
+		})
+	});
+});
+    $(function () {
+        $('#addnew').click(function(){
+            var obj = document.getElementById("issued_sub_key_c"); //定位id
+            var index = obj.selectedIndex; // 选中索引
+            var text = obj.options[index].text; // 选中文本
+            var obj1 = document.getElementById("testtime_select");
+            var index1 = obj1.selectedIndex;
+            var text1 = obj1.options[index1].text;
+            var obj2 = document.getElementById("class_select");
+            var index2 = obj2.selectedIndex;
+            var text2 = obj2.options[index2].text;
+            window.location.href=encodeURI("add5.html?name="+text+"&time="+text1+"&class="+text2);
+         });
+
+
+    });
+	function del(_var)
+	{
+		var  getval =_var.getElementsByTagName("td")[0].innerHTML;
+		var  test =_var.getElementsByTagName("td")[2].innerHTML; 
+		var  time =_var.getElementsByTagName("td")[3].innerHTML; 
+		var  room =_var.getElementsByTagName("td")[4].innerHTML; 
+		if(confirm("确定要删除吗？"))
+		{
+            $.ajax({
+                type:"post",
+                url:"deleteTeacherInClass",
+                cache: false,
+                data: {"Tid":getval,"test":test,"time":time,"Class":room},
+                success:function(result){alert(result);
+                window.location.href="index5.html";}
+            });
+		}
+	}
+</script>

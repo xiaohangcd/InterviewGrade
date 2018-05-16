@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+
+    <link rel="stylesheet" type="text/css" href="login.css"/>
+    <script type="text/javascript" src="../Js/jquery.js"></script>
+</head>
+
+<body>
+<div id="login_frame">
+
+    <p id="image_logo">面试打分后台管理</p>
+
+    <form name="formLogin" method="post" >
+
+        <p><label class="label_input">用户名</label><input type="text" id="username" required="required" class="text_field"/></p>
+        <p><label class="label_input">密码</label><input type="password" id="password" required="required" class="text_field"/></p>
+        <div id="message" style="color:#ff0000;"></div>
+        <div id="login_control">
+            <input type="button" id="btn_login" value="登录"/>          
+        </div>
+    </form>
+</div>
+<script>
+	$(function () {
+		$(document).keydown(function (event) {
+			if(event.keyCode == 13)
+				{
+					alert(123);
+					$('#btn_login').click();
+				}
+		});
+	});
+
+	
+    $(function () {
+        
+
+        $('#btn_login').click(function(){
+            $("#message").text("");
+            var valueName = $("#username").val();
+            var valuePwd = $("#password").val();
+
+            if (valueName == "" && valuePwd == "") {
+                $("#message").text("请输入用户名和密码");
+                return;
+            }
+            else if (valueName == "") {
+                $("#message").text("请输入用户名");
+                return;
+            }
+            else if (valuePwd == "") {
+                $("#message").text("请输入密码");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+               	url: "test",
+                cache: false,
+                data: {"user":valueName,"password":valuePwd},
+                success: onSuccess
+            });
+
+         });
+
+
+    });
+        function onSuccess(data) {
+        data = $.trim(data);
+        if (data == "success") {
+            window.location.href="../index.html";
+        }
+        else {
+            $("#message").text('用户名和密码错误!');
+        }
+    }
+
+</script>
+</body>
+</html>

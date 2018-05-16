@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/style.css" />
+    <script type="text/javascript" src="../Js/jquery.js"></script>
+    <script type="text/javascript" src="../Js/jquery.sorted.js"></script>
+    <script type="text/javascript" src="../Js/bootstrap.js"></script>
+    <script type="text/javascript" src="../Js/ckform.js"></script>
+    <script type="text/javascript" src="../Js/common.js"></script>
+
+    <style type="text/css">
+        body {
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+
+        @media (max-width: 980px) {
+            /* Enable use of floated navbar text */
+            .navbar-text.pull-right {
+                float: none;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+
+
+    </style>
+</head>
+<body >
+<form class="form-inline definewidth m20" action="" method="">  
+    考生姓名：
+    <input type="text" name="rolename" id="rolename"class="abc input-default" placeholder="" value="">&nbsp;&nbsp;  
+    <button type="button" class="btn btn-primary" id="submit">查询</button>&nbsp;&nbsp; 
+    <button type="button" class="btn btn-success" id="addnew">新增考生</button>
+</form>
+<table class="table table-bordered table-hover definewidth m10" id="tab">
+    <thead>
+    <tr>
+        <th>考号</th>
+        <th>姓名</th>
+        <th>身份证</th>
+        <th>手机号</th>
+        <th>管理操作</th>
+    </tr>
+    </thead>
+    <tbody id="tbody1">
+        
+    </tbody>
+</table>
+</body>
+</html>
+<script>
+    $(function () {
+        
+		$('#addnew').click(function(){
+			//alert("ssss");
+				window.location.href="add.html";
+		 });
+
+
+    });
+    $(function () {
+		$('#submit').click(function () {
+			var getSname = $("#rolename").val();
+			//alert("s");
+			$.ajax({
+				type:"post",
+				url:"selectStudent",
+				cache:false,
+				data:{"Sname":getSname},
+				success:function(data){
+					//alert(data);
+					 var div1=document.getElementById('tbody1');
+				        var code='';
+				       $.each(data,function(index,content){
+				        	//alert(content.s_number);
+				            code+='<tr id="tab';
+				            code+=index;
+				            code+='"><td>';
+				            code+=content.s_number;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.s_name;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.s_id;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.s_telephone;
+				            code+='</td>';
+				            code+='<td>';
+				            code+='<a href="#" onclick="edit(this.parentNode.parentNode)">编辑</a>&nbsp;&nbsp';
+				            code+='<a href="javascript:void(0)" onclick="del(this.parentNode.parentNode)">删除</a>';
+				            code+='</td>';
+				            code+='</tr>';
+				        });
+				        div1.innerHTML=code;
+				}
+			})
+		});
+	});
+
+    function edit(_var)
+    {
+        var  getval =_var.getElementsByTagName("td")[0].innerHTML;  
+        window.location.href="edit.html?id="+getval; 
+    }
+
+	function del(_var)
+	{
+		var  getval =_var.getElementsByTagName("td")[0].innerHTML; 
+		if(confirm("确定要删除吗？"))
+		{
+            $.ajax({
+                type:"post",
+                url:"deleteStudent",
+                cache: false,
+                data: {"Sid":getval},
+                success:function(result){alert(result);
+                window.location.href="index.html";}
+            });
+		}
+	}
+var students = [
+{ "Sid":"s2000" , "Sname":"Gates","Sidcard":"111","Sphone":13125551221 },
+{ "Sid":"s2001" , "Sname":"Bush","Sidcard":"121","Sphone":13125571221 },
+{ "Sid":"s2002" , "Sname": "Carter","Sidcard":"11221","Sphone":13126351221 }
+];
+</script>

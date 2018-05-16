@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+        <title> 数据分析 </title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="ROBOTS" content="NOINDEX,NOFOLLOW,NOARCHIVE" />
+</head>
+<body>
+
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/font-awesome.css" />
+<link rel="stylesheet" href="css/daterangepicker.css" />
+
+<script src='js/jquery.js'></script>
+<script src='js/common.js'></script>
+<script src="js/date-time/moment.js?ver=1" type="text/javascript"></script>
+<script src="js/date-time/daterangepicker.zh-CN.js?ver=1" type="text/javascript"></script>
+<script src="js/date-time/daterangepicker.js?ver=1" type="text/javascript"></script>
+<div id="dd"  style="padding: 40px 100px 10px;">
+    <form class="bs-example bs-example-form" role="form">
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">
+                        <input type="checkbox" id="Sid" name="Sid">&nbsp考生编号</span>
+                    <input type="text" id="inputSid" name="inputSid" class="form-control">
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-5 -->
+            </div>
+            <br>
+            <div class="row">
+            <div class="col-lg-5">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">
+                        <input type="checkbox" id="Tid" name="Tid">&nbsp考官编号</span>
+                    <input type="text" id="inputTid" name="inputTid" class="form-control">
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-5 -->
+        </div><!-- /.row -->
+        <br>
+            <div class="row">
+            <div class="col-lg-5">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-addon">
+                        <input type="checkbox" id="testName" name="testName">&nbsp考试编号</span>
+                    <input type="text" id="inputTestName" name="inputTestName" class="form-control">
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-5 -->
+        </div><!-- /.row -->
+       <br>
+            <div class="row">
+            <div class="col-lg-5">
+				<div class="input-group input-group-sm">
+				     <span class="input-group-addon">
+                        <input type="checkbox" id="time" name="time">&nbsp起止时间</span>
+					<input class="form-control date-picker" id="dateTimeRange" value="" type="text">
+						<span class="input-group-addon">
+							<i class="fa fa-calendar bigger-110"></i>
+						</span>
+					<input name="beginTime" id="beginTime" name="beginTime" value="" type="hidden">
+					<input name="endTime" id="endTime" name="endTime" value="" type="hidden">
+				</div>
+            </div><!-- /.col-lg-5 -->
+        </div><!-- /.row -->
+        <br>
+        <div class="row">
+        	<div class="col-lg-5">
+        		<div class="input-group input-group-sm">
+        			<span class="input-group-addon">
+        				<input type="checkbox" id="grade" name="grade">&nbsp分数范围</span>
+						<input type="number" id="lowGrade" name="lowGrade" min="0" max="100" class="col-lg-1 form-control " >&nbsp至&nbsp
+						<input type="number" id="highGrade" name="highGrade" min="0" max="100" class="col-lg-1 form-control " >
+        		</div>
+        	</div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-lg-5">
+                     <button type="button" class="btn btn-primary" id="submit">确定</button>
+                </div>
+            </div>
+      </form>
+</div>
+
+<!--<a href="javascript:;" onclick="begin_end_time_clear();">清除</a>-->
+
+<script type="text/javascript">
+$(function () {
+	$('#submit').click(function () {
+		if ($('#Sid').is(':checked')) {
+			var getSid = $("#inputSid").val();
+		} else {
+			var getSid = "#";
+		}
+		if ($('#Tid').is(':checked')) {
+			var getTid = $("#inputTid").val();
+		} else {
+			var getTid = "#";
+		}
+		if ($('#testName').is(':checked')) {
+			var testName = $("#inputTestName").val();
+		} else {
+			var testName = "#";
+		}
+		if ($('#time').is(':checked')) {
+			var beginTime = $("#beginTime").val();
+			var endTime = $("#endTime").val();
+		} else {
+			var beginTime = "#";
+			var endTime = "#";
+		}
+		if ($('#grade').is(':checked')) {
+			var lowGrade = $("#lowGrade").val();
+			var highGrade = $("#highGrade").val();
+		} else {
+			var lowGrade = "#";
+			var highGrade = "#";
+		}
+		alert(getSid+getTid+testName+beginTime+endTime+lowGrade+highGrade);
+		$.ajax({
+			type:"post",
+			url:"selectData",
+			cache:false,
+			data:{"Sid":getSid,"Tid":getTid,"testName":testName,"beginTime":beginTime,"endTime":endTime,"lowGrade":lowGrade,"highGrade":highGrade},
+			success:function(data){
+				 var div1=document.getElementById('dd');
+			        var code='<TABLE class="table table-bordered table-hover definewidth m10">';
+			        code += '<thead><TR><TH>考生号</TH><TH>考官号</TH><TH>考试号</TH><TH>成绩</TH></TR></thead>';
+			       $.each(data,function(index,content){
+			        	//alert(content.s_number);
+			            code+='<tr id="tab';
+			            code+=index;
+			            code+='"><td>';
+			            code+=content.s_number;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.e_number;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.t_number;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.z_grade;
+			            code+='</td>';
+			            code+='</tr>';
+			        });
+			        div1.innerHTML=code;
+			}
+		})
+	});
+});
+$(function() {
+	$('#dateTimeRange').daterangepicker({
+		applyClass : 'btn-sm btn-success',
+		cancelClass : 'btn-sm btn-default',
+		locale: {
+			applyLabel: '确认',
+			cancelLabel: '取消',
+			fromLabel : '起始时间',
+			toLabel : '结束时间',
+		},
+		opens : 'right',	// 日期选择框的弹出位置
+		separator : ' 至 ',
+		showWeekNumbers : false,	// 是否显示第几周
+
+
+		timePicker: true,
+		timePickerIncrement : 1,	// 时间的增量，单位为分钟
+		timePicker12Hour : false,	// 是否使用12小时制来显示时间
+
+
+		//maxDate : moment(),			// 最大时间
+		format: 'YYYY-MM-DD HH:mm:ss'
+
+	}, function(start, end, label) { // 格式化日期显示框
+		$('#beginTime').val(start.format('YYYY-MM-DD HH:mm:ss'));
+		$('#endTime').val(end.format('YYYY-MM-DD HH:mm:ss'));
+	})	
+	.next().on('click', function(){
+		$(this).prev().focus();
+	});
+});
+$(function () {       
+        $('#backid').click(function(){
+                window.location.href="../index.html";
+         });
+
+    });
+/**
+ * 清除时间
+ */
+function begin_end_time_clear() {
+	$('#dateTimeRange').val('');
+	$('#beginTime').val('');
+	$('#endTime').val('');
+}
+</script>
+</body>
+</html>

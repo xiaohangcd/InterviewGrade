@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/style.css" />
+    <script type="text/javascript" src="../Js/jquery.js"></script>
+    <script type="text/javascript" src="../Js/jquery.sorted.js"></script>
+    <script type="text/javascript" src="../Js/bootstrap.js"></script>
+    <script type="text/javascript" src="../Js/ckform.js"></script>
+    <script type="text/javascript" src="../Js/common.js"></script>
+
+    <style type="text/css">
+        body {
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+
+        @media (max-width: 980px) {
+            /* Enable use of floated navbar text */
+            .navbar-text.pull-right {
+                float: none;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+<form class="form-inline definewidth m20" action="" method="get">
+    考试名称：<select id="issued_sub_key_c" name="issued_sub_key_c"> 
+    <option value="-1">--请选择--</option>
+    </select>&nbsp;&nbsp;
+    科目数量：
+    <input type="number" name="subjectNum" id="subjectNum"class="abc input-default" placeholder="" value="">&nbsp;&nbsp; 
+    <button type="button" class="btn btn-primary" id="submit">查询</button>&nbsp;&nbsp;
+    <button type="button" class="btn btn-success" id="addnew">添加</button>&nbsp;&nbsp;
+    <button type="button" class="btn btn-success" id="delete">删除</button>   
+</form>
+<table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>科目名称</th>
+        <th>分值</th>
+    </tr>
+    </thead>
+    <tbody id="tbody1">        
+    </tbody>
+        </table>
+
+</body>
+</html>
+<script>
+$(function () {
+	$('#submit').click(function () {
+		var getTname=$("#issued_sub_key_c").find("option:selected").text();
+		$.ajax({
+			type:"post",
+			url:"selectTestSubject",
+			cache:false,
+			data:{"Tname":getTname},
+			success:function(data){
+				//alert("111");
+				 var div1=document.getElementById('tbody1');
+			        var code='';
+			        $.each(data,function(index,content){
+			            code+='<tr id="tab';
+			            code+=index;
+			            code+='"><td>';
+			            code+=content.ts_name;
+			            code+='</td>';
+			            code+='<td>';
+			            code+=content.weights;
+			            code+='</td>';
+			            code+='</tr>';
+			        });
+			        div1.innerHTML=code;
+			}
+		})
+	});
+});
+    $(function () {
+		$('#addnew').click(function(){
+            var text=$("#issued_sub_key_c").find("option:selected").text();
+            var num = document.getElementById("subjectNum").value;
+			window.location.href=encodeURI("add2.html?name="+text+"&num="+num);
+		 });
+
+
+    });
+    $(function () {
+		$('#delete').click(function(){
+			var text=$("#issued_sub_key_c").find("option:selected").text();
+			if(confirm("确定要删除吗？"))
+			{
+	            $.ajax({
+	                type:"post",
+	                url:"deleteTestSubject",
+	                cache: false,
+	                data: {"Tname":text},
+	                success:function(result){alert(result);
+	                window.location.href="index2.html";}
+	            });
+			}
+		 });
+
+
+    });
+
+    $(function () {
+		    $.ajax({
+		       // timeout: 3000,
+		       // async: false,
+		        type: "post",
+		        url: "index2Select",
+		        cache:false,
+		        data: {"warehouse": $("#issued_sub_key_c").val()},
+		        success: function(data) {
+			        $.each(data,function(index,content){
+			        	 $("#issued_sub_key_c").append("<option>" + content.t_name + "</option>");
+			        });
+		        }
+		    });
+    });
+</script>

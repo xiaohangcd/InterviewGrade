@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/style.css" />
+    <script type="text/javascript" src="../Js/jquery.js"></script>
+    <script type="text/javascript" src="../Js/jquery.sorted.js"></script>
+    <script type="text/javascript" src="../Js/bootstrap.js"></script>
+    <script type="text/javascript" src="../Js/ckform.js"></script>
+    <script type="text/javascript" src="../Js/common.js"></script>
+
+    <style type="text/css">
+        body {
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+
+        @media (max-width: 980px) {
+            /* Enable use of floated navbar text */
+            .navbar-text.pull-right {
+                float: none;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+<form class="form-inline definewidth m20" action="" method="get">  
+    考官名字：
+    <input type="text" name="rolename" id="rolename"class="abc input-default" placeholder="" value="">&nbsp;&nbsp;  
+    <button type="button" class="btn btn-primary" id="submit">查询</button>&nbsp;&nbsp; <button type="button" class="btn btn-success" id="addnew">新增考官</button>
+</form>
+<table class="table table-bordered table-hover definewidth m10" >
+    <thead>
+    <tr>
+        <th>考官编号</th>
+        <th>姓名</th>
+        <th>手机号码</th>
+        <th>身份证号码</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody id="tbody1">        
+    </tbody>
+    </table>
+		</body>
+		</html>
+
+<script>
+    $(function () {
+        
+		$('#addnew').click(function(){
+
+				window.location.href="add.html";
+		 });
+
+
+    });
+   /* $(function () {
+		$('#submit').click(function () {
+			var getTname = $("#rolename").val();
+			$.ajax({
+				type:"post",
+				url:"selectTeacher",
+				cache:false,
+				data:{"Tname":getTname},
+				success:function(data){
+					 var div1=document.getElementById('tbody1');
+				        var code='';
+				        alert("666");
+				        alert(data);
+				        $.each(data,function(index,content){
+				            code+='<tr id="tab';
+				            code+=index;
+				            code+='"><td>';
+				            code+=content.e_number;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.e_name;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.e_id;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.e_telephone;
+				            code+='</td>';
+				            code+='<td>';
+				            code+='<a href="#" onclick="edit(this.parentNode.parentNode)">编辑</a>&nbsp;&nbsp';
+				            code+='<a href="javascript:void(0)" onclick="del(this.parentNode.parentNode)">删除</a>';
+				            code+='</td>';
+				            code+='</tr>';
+				        });
+				        div1.innerHTML=code;
+				}
+			})
+		});
+	});*/
+    $(function () {
+		$('#submit').click(function () {
+			var getTname = $("#rolename").val();
+			//alert("s");
+			$.ajax({
+				type:"post",
+				url:"selectTeacher",
+				cache:false,
+				data:{"Tname":getTname},
+				success:function(data){
+					//alert("888");
+					//alert(data);
+					 var div1=document.getElementById('tbody1');
+				        var code='';
+				       $.each(data,function(index,content){
+				        	//alert(content.s_number);
+				            code+='<tr id="tab';
+				            code+=index;
+				            code+='"><td>';
+				            code+=content.e_number;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.e_name;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.e_id;
+				            code+='</td>';
+				            code+='<td>';
+				            code+=content.e_telephone;
+				            code+='</td>';
+				            code+='<td>';
+				            code+='<a href="#" onclick="edit(this.parentNode.parentNode)">编辑</a>&nbsp;&nbsp';
+				            code+='<a href="javascript:void(0)" onclick="del(this.parentNode.parentNode)">删除</a>';
+				            code+='</td>';
+				            code+='</tr>';
+				        });
+				        div1.innerHTML=code;
+				}
+			})
+		});
+	});
+
+    function edit(_var)
+    {
+        var  getval =_var.getElementsByTagName("td")[0].innerHTML;  
+        window.location.href="edit.html?id="+getval; 
+    }
+
+	function del(_var)
+	{
+		var  getval =_var.getElementsByTagName("td")[0].innerHTML; 
+		if(confirm("确定要删除吗？"))
+		{
+            $.ajax({
+                type:"post",
+                url:"deleteTeacher",
+                cache: false,
+                data: {"Tid":getval},
+                success:function(result){alert(result);
+                window.location.href="index.html";}
+            });
+		}
+	}
+</script>

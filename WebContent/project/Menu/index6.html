@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/bootstrap-responsive.css" />
+    <link rel="stylesheet" type="text/css" href="../Css/style.css" />
+    <script type="text/javascript" src="../Js/jquery.js"></script>
+    <script type="text/javascript" src="../Js/jquery.sorted.js"></script>
+    <script type="text/javascript" src="../Js/bootstrap.js"></script>
+    <script type="text/javascript" src="../Js/ckform.js"></script>
+    <script type="text/javascript" src="../Js/common.js"></script>
+
+    <style type="text/css">
+        body {
+            padding-bottom: 40px;
+        }
+        .sidebar-nav {
+            padding: 9px 0;
+        }
+
+        @media (max-width: 980px) {
+            /* Enable use of floated navbar text */
+            .navbar-text.pull-right {
+                float: none;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+<form class="form-inline definewidth m20" action="index.html" method="get">
+    考试名称：<select id="test_select" name="test_select"> 
+    <option value="0">舞蹈</option>
+    <option value="1">数学</option>
+    <option value="2">计算机</option>
+    </select>&nbsp;&nbsp;
+    科目名称：<select id="subject_select" name="subject_select">
+    <option value="0">科目一</option>
+    <option value="1">科目二</option>    
+    </select>&nbsp;&nbsp;
+    分段数量：
+    <input type="number" name="number" id="number"class="abc input-default" placeholder="" value="">&nbsp;&nbsp; 
+    <button type="button" class="btn btn-primary" onclick="">查询</button>&nbsp;&nbsp; <button type="button" class="btn btn-success" id="addnew">添加</button>
+</form>
+<table class="table table-bordered table-hover definewidth m10">
+    <thead>
+    <tr>
+        <th>考试名称</th>
+        <th>科目名称</th>
+        <th>管理操作</th>
+    </tr>
+    </thead>
+         <tr>
+            <td>舞蹈</td>
+            <td>科目一</td>
+            <td>
+            <a href="#" onclick="">详情</a>&nbsp;&nbsp;
+            <a href="#" onclick="del()">删除</a>
+            </td>
+        </tr>
+        </table>
+
+</body>
+</html>
+<script>
+    $(function () {
+        
+
+        $('#addnew').click(function(){
+            var obj = document.getElementById("test_select"); //定位id
+            var index = obj.selectedIndex; // 选中索引
+            var text = obj.options[index].text; // 选中文本
+            var obj1 = document.getElementById("subject_select");
+            var index1 = obj1.selectedIndex;
+            var text1 = obj1.options[index1].text;
+            var num = document.getElementById("number").value;
+            window.location.href=encodeURI("add6.html?test="+text+"&subject="+text1+"&num="+num);
+         });
+
+
+    });
+       function del()
+    {
+        
+        
+        if(confirm("确定要删除吗？"))
+        {
+            var obj = document.getElementById("issued_sub_key_c"); //定位id
+            var index = obj.selectedIndex; // 选中索引
+            var text = obj.options[index].text; // 选中文本
+            var value = obj.options[index].value; // 选中值
+            alert(text);
+            var url = "index6.html";
+            
+            window.location.href=url;       
+        
+        }
+    
+    
+    
+    
+    }
+</script>
